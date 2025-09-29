@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Neon 3D Login & Signup</title>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      font-family: "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      color: #fff;
+      overflow: hidden;
+    }
+    #tsparticles {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+    }
+
+    .card {
+      width: 380px;
+      padding: 28px;
+      border-radius: 16px;
+      background: transparent !important;
+      backdrop-filter: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      position: absolute;
+      opacity: 0;
+      transform: translateX(100%) scale(0.9);
+      transition: all 0.6s ease;
+    }
+    .card.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      z-index: 10;
+    }
+    .card.exit-left {
+      opacity: 0;
+      transform: translateX(-100%) scale(0.9);
+      z-index: 0;
+    }
+    .card.exit-right {
+      opacity: 0;
+      transform: translateX(100%) scale(0.9);
+      z-index: 0;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #fff;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px rgba(255,255,255,0.8);
+    }
+
+    .row { margin-bottom: 18px; display: flex; flex-direction: column; }
+    label { font-size: 13px; margin-bottom: 6px; }
+    input, select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.3);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: #fff;
+      box-shadow: 0 0 10px rgba(255,255,255,0.6);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #fff;
+      color: #000;
+      font-size: 15px;
+      transition: transform 0.1s;
+    }
+    .btn:active { transform: translateY(2px); }
+
+    .links {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+    }
+    .links a {
+      font-size: 13px;
+      text-decoration: none;
+      color: #bbb;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="tsparticles"></div>
+
+  <!-- 로그인 -->
+  <section class="card active" id="loginCard">
+    <h2>LOGIN</h2>
+    <form id="loginForm" novalidate>
+      <div class="row">
+        <label for="loginEmail">이메일</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="row">
+        <label for="loginPw">비밀번호</label>
+        <input type="password" id="loginPw" placeholder="6자 이상 (특수문자 포함)" minlength="6" required>
+      </div>
+      <div class="row">
+        <label><input type="checkbox" id="autoLogin"> 자동 로그인</label>
+      </div>
+      <button type="submit" class="btn">로그인</button>
+      <div class="links">
+        <a onclick="switchForm('signup')">회원가입</a>
+        <a href="#">비밀번호 찾기</a>
+      </div>
+    </form>
+  </section>
+
+  <!-- 회원가입 -->
+  <section class="card" id="signupCard">
+    <h2>SIGN UP</h2>
+    <form id="signupForm" novalidate>
+      <div class="row">
+        <label for="signupEmail">이메일</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="row">
+        <label for="signupPw">비밀번호</label>
+        <input type="password" id="signupPw" placeholder="6자 이상 (특수문자 포함)" minlength="6" required>
+      </div>
+      <div class="row">
+        <label for="signupPw2">비밀번호 확인</label>
+        <input type="password" id="signupPw2" placeholder="비밀번호 확인" required>
+      </div>
+      <div class="row">
+        <label for="signupName">이름</label>
+        <input type="text" id="signupName" placeholder="홍길동" required>
+      </div>
+      <div class="row">
+        <label for="signupBirth">생년월일</label>
+        <div style="display:flex; gap:8px">
+          <select id="birthYear" required>
+            <option value="">연도</option>
+          </select>
+          <select id="birthMonth" required>
+            <option value="">월</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+          </select>
+          <select id="birthDay" required>
+            <option value="">일</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <label for="signupNick">닉네임</label>
+        <input type="text" id="signupNick" placeholder="닉네임" required>
+      </div>
+      <button type="submit" class="btn">회원가입</button>
+      <div class="links">
+        <a onclick="switchForm('login')">→ 로그인으로</a>
+      </div>
+    </form>
+  </section>
+
+  <!-- 비밀번호 찾기 -->
+  <section class="card" id="forgotCard">
+    <h2>비밀번호 찾기</h2>
+    <form id="forgotForm" novalidate>
+      <div class="row">
+        <label for="forgotEmail">이메일</label>
+        <input type="email" id="forgotEmail" placeholder="you@example.com" required>
+      </div>
+      <button type="submit" class="btn">링크 보내기</button>
+      <div class="links">
+        <a onclick="switchForm('login')">← 로그인으로</a>
+      </div>
+    </form>
+  </section>
+
+  <script>
+    // tsParticles 그대로 유지
+    tsParticles.load("tsparticles", {
+      fpsLimit: 60,
+      interactivity: {
+        events: { onHover: { enable: true, mode: "repulse" }, resize: true },
+        modes: { repulse: { distance: 90, duration: 3.0, speed: 0.2 } }
+      },
+      particles: {
+        number: { value: 379, density: { enable: true, area: 900 } },
+        color: { value: "#ffffff" },
+        links: { enable: true, color: "#ffffff", distance: 150, opacity: 0.3, width: 1.2 },
+        move: { enable: true, speed: 0.3, random: true, outModes: "out", parallax: { enable: true, force: 200, smooth: 8 } },
+        opacity: { value: 0.9 },
+        size: { value: { min: 1.2, max: 4.5 } },
+      },
+      detectRetina: true
+    });
+
+    // 생년월일 옵션 자동 생성
+    const yearSel = document.getElementById("birthYear");
+    const monthSel = document.getElementById("birthMonth");
+    const daySel = document.getElementById("birthDay");
+    const thisYear = new Date().getFullYear();
+    for (let y = 1900; y <= thisYear; y++) {
+      let opt = document.createElement("option");
+      opt.value = y; opt.textContent = y;
+      yearSel.appendChild(opt);
+    }
+    monthSel.addEventListener("change", updateDays);
+    yearSel.addEventListener("change", updateDays);
+    function updateDays() {
+      daySel.innerHTML = "<option value=''>일</option>";
+      if (!yearSel.value || !monthSel.value) return;
+      const daysInMonth = new Date(yearSel.value, monthSel.value, 0).getDate();
+      for (let d = 1; d <= daysInMonth; d++) {
+        let opt = document.createElement("option");
+        opt.value = d; opt.textContent = d;
+        daySel.appendChild(opt);
+      }
+    }
+
+    // ===== 폼 전환 함수 =====
+    function switchForm(target) {
+      const loginCard = document.getElementById("loginCard");
+      const signupCard = document.getElementById("signupCard");
+      const forgotCard = document.getElementById("forgotCard");
+
+      [loginCard, signupCard, forgotCard].forEach(card => {
+        card.classList.remove("active", "exit-left", "exit-right");
+      });
+
+      if (target === "signup") {
+        loginCard.classList.add("exit-left");
+        setTimeout(() => signupCard.classList.add("active"), 600);
+      } else if (target === "forgot") {
+        loginCard.classList.add("exit-left");
+        setTimeout(() => forgotCard.classList.add("active"), 600);
+      } else {
+        signupCard.classList.add("exit-right");
+        forgotCard.classList.add("exit-right");
+        setTimeout(() => loginCard.classList.add("active"), 600);
+      }
+
+      document.querySelectorAll("input").forEach(i => i.value = "");
+    }
+
+    // ===== 에러 메시지 =====
+    const emailFields = [document.getElementById("loginEmail"), document.getElementById("signupEmail")];
+    const pwFields = [document.getElementById("loginPw"), document.getElementById("signupPw")];
+    const pw2 = document.getElementById("signupPw2");
+
+    emailFields.forEach(email => {
+      email.oninput = () => {
+        if (!email.value.includes(".net") && !email.value.includes(".com")) {
+          email.setCustomValidity("이메일을 확인하십시오. (ex: .net .com)");
+        } else { email.setCustomValidity(""); }
+      };
+    });
+
+    pwFields.forEach(pw => {
+      pw.oninput = () => {
+        if (!/[!@#$%^~&*]/.test(pw.value)) {
+          pw.setCustomValidity("특수문자 1개 이상을 사용하십시오. (ex: !@#$%^~&*)");
+        } else { pw.setCustomValidity(""); }
+      };
+    });
+
+    pw2.oninput = () => {
+      if (pw2.value !== document.getElementById("signupPw").value) {
+        pw2.setCustomValidity("비밀번호가 일치하지 않습니다.");
+      } else { pw2.setCustomValidity(""); }
+    };
+
+    // ===== API URL =====
+    const API_URL = 'http://localhost:3000/api';
+
+    // ===== 로그인 처리 =====
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPw").value;
+      const autoLogin = document.getElementById("autoLogin").checked;
+
+      try {
+        const res = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        localStorage.setItem('token', data.token);
+        if (autoLogin) localStorage.setItem('refreshToken', data.refreshToken);
+
+        alert('로그인 성공!');
+        location.href = '/chat.html';
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // ===== 회원가입 처리 =====
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPw").value;
+      const nickname = document.getElementById("signupNick").value;
+
+      try {
+        const res = await fetch(`${API_URL}/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, nickname })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        alert('회원가입 성공! 이메일 인증을 완료해주세요.');
+        switchForm('login');
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // ===== 비밀번호 찾기 처리 =====
+    document.getElementById("forgotForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("forgotEmail").value;
+
+      try {
+        const res = await fetch(`${API_URL}/forgot`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error);
+
+        alert('비밀번호 재설정 링크가 이메일로 전송되었습니다.');
+        switchForm('login');
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    // 비밀번호 찾기 링크 클릭
+    document.querySelector('a[href="#"]').addEventListener('click', (e) => {
+      e.preventDefault();
+      switchForm('forgot');
+    });
+  </script>
+</body>
+</html>

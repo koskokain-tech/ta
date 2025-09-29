@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>이메일 인증</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #000; /* 검은 배경 */
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      position: absolute;
+      top: 60px;
+      font-size: 28px;
+      color: #fff; /* 흰색 유지 */
+      z-index: 2;
+    }
+    canvas {
+      position: absolute;
+      inset: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>이메일 인증이 완료되었습니다.</h1>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2 + 50;
+    const scale = 15;
+
+    // 하트 좌표 생성
+    const heartPath = [];
+    for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+      const x = 16 * Math.pow(Math.sin(angle), 3);
+      const y = -(13 * Math.cos(angle) - 5 * Math.cos(2*angle) - 2 * Math.cos(3*angle) - Math.cos(4*angle));
+      heartPath.push({ x: x * scale, y: y * scale });
+    }
+
+    let drawIndex = 0;
+    const heartParticles = [];
+
+    function animate() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 하트 점을 따라 별처럼 찍기 (계속 반복)
+      if (drawIndex < heartPath.length) {
+        const point = heartPath[drawIndex];
+        heartParticles.push({
+          x: centerX + point.x,
+          y: centerY + point.y,
+          alpha: 1,
+          size: Math.random() * 2 + 1,
+          color: `hsl(${Math.random() * 360}, 100%, 70%)`
+        });
+        drawIndex++;
+      } else {
+        // 다시 처음부터 반복해서 계속 그려짐
+        drawIndex = 0;
+      }
+
+      // 파티클 그리기
+      heartParticles.forEach((p, i) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        p.alpha -= 0.01; // 점점 사라짐
+        if (p.alpha <= 0) heartParticles.splice(i, 1);
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
